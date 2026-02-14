@@ -55,4 +55,7 @@ export class Library {
         throw new Error("Unknown media type");
     }
   }
+  hasItem(id) {
+    return this.items.some((item) => item.id === id);
+  }
 }

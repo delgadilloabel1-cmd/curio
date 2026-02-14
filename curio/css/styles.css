@@ -1,0 +1,163 @@
+/* ======================
+   Base Layout
+====================== */
+
+body {
+  font-family: system-ui, sans-serif;
+  margin: 0;
+  background: #0f172a;
+  color: #e5e7eb;
+}
+
+header {
+  padding: 1.5rem;
+  text-align: center;
+  border-bottom: 1px solid #1f2933;
+}
+
+/* ======================
+   Library Grid & Cards
+====================== */
+
+.library-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+  padding: 1.5rem;
+}
+
+.media-card {
+  background: #111827;
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.media-card h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.media-meta {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+.media-card img {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 0.5rem;
+  object-fit: cover;
+}
+
+/* ======================
+   Modal Overlay
+====================== */
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+/* ======================
+   Modal Container
+====================== */
+
+.modal-content {
+  background: #020617;
+  border-radius: 16px;
+  max-width: 800px;
+  width: 95%;
+  max-height: 90vh;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ======================
+   Modal Body Layout
+====================== */
+
+.modal-body {
+  display: flex;
+  gap: 1.5rem;
+  padding: 1.5rem;
+}
+
+/* Poster (Left Column) */
+.modal-poster {
+  width: 220px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+/* Info (Right Column) */
+.modal-info {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+/* Scrollbar polish */
+.modal-info::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-info::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+
+/* ======================
+   Modal Content
+====================== */
+
+#close-modal {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  color: #e5e7eb;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.modal-section {
+  margin-top: 1rem;
+}
+
+.muted {
+  opacity: 0.6;
+}
+
+/* ======================
+   Buttons
+====================== */
+
+.primary-btn {
+  margin-top: 1.5rem;
+  padding: 0.75rem 1rem;
+  background: #6366f1;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.primary-btn:hover {
+  background: #4f46e5;
+}
