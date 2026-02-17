@@ -1,5 +1,5 @@
 export function renderLibrary(items) {
-  const container = document.getElementById("library");
+  const container = document.getElementById("library-grid");
   container.innerHTML = "";
 
   if (items.length === 0) {
@@ -80,4 +80,32 @@ export function renderSearchResults(results, onSelect) {
     card.addEventListener("click", () => onSelect(movie));
     container.appendChild(card);
   });
+}
+
+export function renderListSidebar(lists, activeList, onSelect) {
+  const ul = document.getElementById("list-sidebar");
+  ul.innerHTML = "";
+
+  lists.forEach((name) => {
+    const li = document.createElement("li");
+    li.textContent = name;
+    li.classList.toggle("active", name === activeList);
+    li.addEventListener("click", () => onSelect(name));
+    ul.appendChild(li);
+  });
+}
+
+export function renderListDropdown(lists, activeList, onSelect) {
+  const select = document.getElementById("list-dropdown");
+  select.innerHTML = "";
+
+  lists.forEach((name) => {
+    const option = document.createElement("option");
+    option.value = name;
+    option.textContent = name;
+    if (name === activeList) option.selected = true;
+    select.appendChild(option);
+  });
+
+  select.onchange = (e) => onSelect(e.target.value);
 }

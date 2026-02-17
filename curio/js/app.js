@@ -1,53 +1,78 @@
 import { Library } from "./library.js";
-import { renderLibrary, hideMediaModal } from "./ui.js";
+import {
+  renderLibrary,
+  hideMediaModal,
+  renderSearchResults,
+  showMediaModal,
+  renderListSidebar,
+  renderListDropdown,
+} from "./ui.js";
 import { searchMovies, getMovieDetails } from "./api.js";
-import { renderSearchResults, showMediaModal } from "./ui.js";
 
 let selectedApiItem = null;
 
 const library = new Library();
+let activeListName = "Watchlist";
 
-if (library.items.length === 0) {
+/* -------------------------
+   DEMO DATA 
+-------------------------- */
+if (library.getList("Watchlist").length === 0) {
   const demo = library.createMedia("movie", {
     id: "tt0111161",
     title: "The Shawshank Redemption",
     synopsis: "Two imprisoned men bond over a number of years.",
+    type: "movie",
+    status: "completed",
   });
 
-  demo.setStatus("completed");
   demo.setRating(5);
   demo.setNotes("All-time favorite.");
 
-  library.add(demo);
+  library.addToList("Watchlist", demo);
 }
 
-console.log("Library loaded:", library.items);
+/* -------------------------
+   LIBRARY VIEW RENDER
+-------------------------- */
+function updateLibraryView() {
+  const items = library.getList(activeListName);
+  renderLibrary(items);
+  console.log(
+    "Rendering list:",
+    activeListName,
+    library.getList(activeListName),
+  );
 
-renderLibrary(library.items);
+  const listNames = library.getListNames();
 
-// Filter buttons
-document.getElementById("controls").addEventListener("click", (e) => {
-  if (!e.target.dataset.type) return;
+  renderListSidebar(listNames, activeListName, (name) => {
+    activeListName = name;
+    updateLibraryView();
+  });
 
-  const type = e.target.dataset.type;
+  renderListDropdown(listNames, activeListName, (name) => {
+    activeListName = name;
+    updateLibraryView();
+  });
+}
 
-  if (type === "all") {
-    renderLibrary(library.items);
-  } else {
-    renderLibrary(library.getByType(type));
-  }
-});
+updateLibraryView();
 
+/* -------------------------
+   MODAL CONTROLS
+-------------------------- */
 document
   .getElementById("close-modal")
   .addEventListener("click", hideMediaModal);
 
 document.getElementById("media-modal").addEventListener("click", (e) => {
-  if (e.target.id === "media-modal") {
-    hideMediaModal();
-  }
+  if (e.target.id === "media-modal") hideMediaModal();
 });
 
+/* -------------------------
+   SEARCH
+-------------------------- */
 const searchInput = document.getElementById("search-input");
 
 searchInput.addEventListener("input", async (e) => {
@@ -56,9 +81,9 @@ searchInput.addEventListener("input", async (e) => {
 
   try {
     const results = await searchMovies(query);
+
     renderSearchResults(results, async (movie) => {
       const details = await getMovieDetails(movie.id);
-      selectedApiItem = details;
       selectedApiItem = details;
 
       showMediaModal({
@@ -76,6 +101,9 @@ searchInput.addEventListener("input", async (e) => {
   }
 });
 
+/* -------------------------
+   ADD TO LIBRARY
+-------------------------- */
 document.getElementById("add-to-library-btn").addEventListener("click", () => {
   if (!selectedApiItem) return;
 
@@ -86,14 +114,40 @@ document.getElementById("add-to-library-btn").addEventListener("click", () => {
     image: selectedApiItem.poster_path
       ? `https://image.tmdb.org/t/p/w500${selectedApiItem.poster_path}`
       : "",
+    type: "movie",
+    status: "planned",
   });
 
-  if (library.hasItem(selectedApiItem.id)) {
-    alert("This item is already in your library.");
-    return;
-  }
-
-  library.add(movie);
-  renderLibrary(library.items);
+  library.addToList(activeListName, movie);
+  updateLibraryView();
   hideMediaModal();
 });
+
+/* -------------------------
+   TABS
+-------------------------- */
+const discoverView = document.getElementById("discover-view");
+const libraryView = document.getElementById("library-view");
+
+const discoverTab = document.getElementById("tab-discover");
+const libraryTab = document.getElementById("tab-library");
+
+libraryTab.addEventListener("click", () => {
+  activeListName = activeListName || "Watchlist"; // 🔑 force valid list
+
+  libraryView.classList.remove("hidden");
+  discoverView.classList.add("hidden");
+
+  libraryTab.classList.add("active");
+  discoverTab.classList.remove("active");
+
+  updateLibraryView();
+});
+
+// libraryTab.addEventListener("click", () => {
+//   libraryView.classList.remove("hidden");
+//   discoverView.classList.add("hidden");
+//   libraryTab.classList.add("active");
+//   discoverTab.classList.remove("active");
+//   updateLibraryView();
+// });

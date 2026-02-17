@@ -1,44 +1,77 @@
 import { Movie, TVShow, Anime, Book } from "./media.js";
-import { saveLibrary, loadLibrary } from "./storage.js";
+import { loadLibrary, saveLibrary } from "./storage.js";
 
 export class Library {
   constructor() {
-    this.items = [];
-    this.load();
+    this.lists = this.load() || {
+      Watchlist: [],
+      "Movies Watched": [],
+      "TV Shows to Watch": [],
+      "Anime Catch-Up": [],
+      TBR: [],
+    };
   }
 
   load() {
-    const rawItems = loadLibrary();
+    const raw = loadLibrary();
+    if (!raw) return null;
 
-    this.items = rawItems.map((item) => {
-      return this.createMedia(item.type, item);
-    });
+    const lists = {};
+
+    for (const [listName, items] of Object.entries(raw)) {
+      lists[listName] = items.map((item) => this.createMedia(item.type, item));
+    }
+
+    return lists;
   }
 
   save() {
-    saveLibrary(this.items);
+    saveLibrary(this.lists);
   }
 
-  add(item) {
-    this.items.push(item);
+  addToList(listName, item) {
+    if (!this.lists[listName]) return;
+
+    if (this.lists[listName].some((i) => i.id === item.id)) return;
+
+    this.lists[listName].push(item);
     this.save();
   }
 
-  remove(id) {
-    this.items = this.items.filter((item) => item.id !== id);
+  removeFromList(listName, id) {
+    if (!this.lists[listName]) return;
+
+    this.lists[listName] = this.lists[listName].filter(
+      (item) => item.id !== id,
+    );
     this.save();
   }
 
-  getByType(type) {
-    return this.items.filter((item) => item.type === type);
+  moveItem(id, fromList, toList) {
+    if (!this.lists[fromList] || !this.lists[toList]) return;
+
+    const item = this.lists[fromList].find((i) => i.id === id);
+    if (!item) return;
+
+    this.lists[fromList] = this.lists[fromList].filter((i) => i.id !== id);
+    this.lists[toList].push(item);
+    this.save();
   }
 
-  getByStatus(status) {
-    return this.items.filter((item) => item.status === status);
+  getList(listName) {
+    return this.lists[listName] || [];
+  }
+
+  getListNames() {
+    return Object.keys(this.lists);
   }
 
   findById(id) {
-    return this.items.find((item) => item.id === id);
+    for (const list of Object.values(this.lists)) {
+      const found = list.find((item) => item.id === id);
+      if (found) return found;
+    }
+    return null;
   }
 
   createMedia(type, data) {
@@ -55,7 +88,10 @@ export class Library {
         throw new Error("Unknown media type");
     }
   }
+
   hasItem(id) {
-    return this.items.some((item) => item.id === id);
+    return Object.values(this.lists)
+      .flat()
+      .some((item) => item.id === id);
   }
 }

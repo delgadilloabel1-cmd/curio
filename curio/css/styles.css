@@ -1,6 +1,9 @@
 /* ======================
    Base Layout
 ====================== */
+.hidden {
+  display: none !important;
+}
 
 body {
   font-family: system-ui, sans-serif;
@@ -60,7 +63,8 @@ header {
 .modal {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(2, 6, 23, 0.85);
+  backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -78,11 +82,15 @@ header {
 .modal-content {
   background: #020617;
   border-radius: 16px;
-  max-width: 800px;
-  width: 95%;
-  max-height: 90vh;
+  max-width: 760px; /* slightly smaller */
+  width: 92%;
+  max-height: 85vh;
   overflow: hidden;
   position: relative;
+
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
 }
 
 /* ======================
@@ -91,8 +99,8 @@ header {
 
 .modal-body {
   display: flex;
-  gap: 1.5rem;
-  padding: 1.5rem;
+  gap: 1.25rem;
+  padding: 1.25rem;
 }
 
 /* Poster (Left Column) */
@@ -160,4 +168,34 @@ header {
 
 .primary-btn:hover {
   background: #4f46e5;
+}
+
+/* ======================
+   Tabs
+====================== */
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.tab {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+
+.tab.active {
+  color: #e5e7eb;
+  border-bottom-color: #6366f1;
+}
+
+.tab:hover {
+  color: #e5e7eb;
 }
